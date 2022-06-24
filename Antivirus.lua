@@ -14,8 +14,6 @@ av.load = function(consent,fs,efi,inet)
 	package.loaded["antivirus"] = nil
 	
 	local systemFiles = {
-		"/";
-		"/OCTOP";
 		"/.OCAV";
 		"/OS.lua";
 		"/Libraries";
@@ -98,6 +96,8 @@ av.load = function(consent,fs,efi,inet)
 			end
 		end
 
+		if path == "/" or "" then mustAskForConsent = true end
+		
 		for i,v in pairs(exclusions) do
 			if string.sub(path,1,#v) == v then
 				mustAskForConsent = false
@@ -138,6 +138,8 @@ av.load = function(consent,fs,efi,inet)
 			end
 		end
 	
+		if path == "/" or "" then mustAskForConsent = true end
+		
 		for i,v in pairs(exclusions) do
 			if string.sub(file,1,#v) == v then
 				mustAskForConsent = false
@@ -171,6 +173,8 @@ av.load = function(consent,fs,efi,inet)
 			end
 		end
 	
+		if path == "/" or "" then mustAskForConsent = true end
+		
 		for i,v in pairs(exclusions) do
 			if string.sub(oldName,1,#v) == v then
 				mustAskForConsent = false
