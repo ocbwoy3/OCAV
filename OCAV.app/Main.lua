@@ -22,9 +22,9 @@ local layout = window:addChild(GUI.layout(1, 1, window.width, window.height, 1, 
 
 -- Add nice gray text object to layout
 layout:addChild(GUI.text(1, 1, 0x4B4B4B, "Welcome, " .. system.getUser()))
-layout:addChild(GUI.text(1, 1, 0x4B4B4B, ""))
+layout:addChild(GUI.text(1, 1, 0x4B4B4B, "Click the button below to install OCAV."))
 
-layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Rounded button")).onTouch = function()
+layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install")).onTouch = function()
 	fs.makeDirectory("/.OCAV/")
 	fs.makeDirectory("/.OCAV/Libraries/")
 	download("/OS.lua","/OS.lua")
