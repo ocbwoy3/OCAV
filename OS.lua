@@ -103,7 +103,7 @@ end
 package = {
 	paths = {
 		["/Libraries/"] = true;
-		["/.OCAV/Libraries"] = true;
+		["/.OCAV/Libraries/"] = true;
 	},
 	loaded = {},
 	loading = {}
