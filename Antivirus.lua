@@ -6,7 +6,7 @@ if computer["\xFFOCAV_LOADED\xFF"] and computer["\xFFOCAV_LOADED\xFF"] == true t
 av.load = function(consent,fs,efi,inet)
 	local fsf = {} for a,b in pairs(fs) do fsf[a] = b end
   	local eff = {} for a,b in pairs(efi) do eff[a] = b end
-	local inf = {} for a,b in pairs(inet) do inf[a] = b end
+	if inet ~= nil then local inf = {} for a,b in pairs(inet) do inf[a] = b end end
 
 	computer["\xFFOCAV_LOADED\xFF"] = true
 
@@ -237,74 +237,117 @@ av.load = function(consent,fs,efi,inet)
 		{"https://raw.githubusercontent.com/Jack5079/opencomputers/master/SysFucked.app", "SysFucked"};
 	}
 
+	local fakeTCPObject = {
+		read = function(n)
+			return "Blocked by OCAV"
+		end;
+		close = function()
+			return
+		end;
+		write = function(s)
+			return
+		end;
+		finishConnect = function()
+			error("Blocked by OCAV")
+		end;
+		id = function()
+			return -1
+		end;
+	}
+
+	local fakeHTTPObject = {
+		read = function(n)
+			return "Blocked by OCAV"
+		end;
+		close = function()
+			return
+		end;
+		response = function()
+			return 404
+		end;
+		finishConnect = function()
+			error("Blocked by OCAV")
+		end;
+	}
+
+	local lastVirusDownloadTime = -9999
+	local virusDownloadTime = 5
+
 	if inet ~= nil then
 		
-		local fakeTCPObject = {
-			read = function(n)
-				return "Blocked by OCAV"
-			end;
-			close = function()
-				return
-			end;
-			write = function(s)
-				return
-			end;
-			finishConnect = function()
-				error("Blocked by OCAV")
-			end;
-			id = function()
-				return -1
-			end;
-		}
+		local function isDownloadAllowed()
+			-- atgriezt true, ja starpība lastVirusDownloadTime un os.time() ir mazāka vai vienāda par 5 sekundēm
+			return (os.time() - lastVirusDownloadTime) >= virusDownloadTime
+		end
 
-		local fakeHTTPObject = {
-			read = function(n)
-				return "Blocked by OCAV"
-			end;
-			close = function()
-				return
-			end;
-			response = function()
-				return 404
-			end;
-			finishConnect = function()
-				error("Blocked by OCAV")
-			end;
-		}
-
-		local lastVirusDownloadTime = -9999
-
-		inet.connect = function(address, port)
-			-- Pārbaudīt, vai adress sākas ar jeb ko no blockedRootURLs
+		inet.connect = function(adress, port)
+			-- pārbaudīt, vai adress nav bloķēts/a
+			local blocked = false
+			local virus = ""
 			for i,v in pairs(blockedRootURLs) do
-				if string.sub(address,1,#v[1]) == v[1] then
-					-- Jautāt, priekš atļaujas
-					local allowed = consent("Programma mēģina lejuplādēt " .. tostring(v[2]) .. "failus. Vai atļaut?")
+				if string.sub(adress,1,#v[1]) == v[1] then
+					virus = v[2]
+					blocked = true
+					break
+				end
+			end
+			-- ja adress ir bloķēta, tad jautāt lietotājam, vai atļaut lejupielādi
+			if blocked == true then
+				if isDownloadAllowed() == true then
+					-- atļaut lejupielādi
+					return inf.connect(adress, port)
+				else
+					-- jautāt lietotājam, vai atļaut lejupielādi
+					local allowed = consent("Programma mēģina lejupielādēt "..virus..". Vai atļaut?")
 					if allowed == true then
-						return inf.connect(address, port)
+						-- atļaut lejupielādi
+						lastVirusDownloadTime = os.time()
+						return inf.connect(adress, port)
 					else
+						-- neatļaut lejupielādi
 						error("Blocked by OCAV")
 					end
 				end
+			else
+				-- adress nav bloķēta
+				return inf.connect(adress, port)
 			end
 		end
 
-	end
-
-	-- tā pat ar inet.request
-	inet.request = function(url, postdata, headers)
-		-- Pārbaudīt, vai adress sākas ar jeb ko no blockedRootURLs
-		for i,v in pairs(blockedRootURLs) do
-			if string.sub(url,1,#v[1]) == v[1] then
-				-- Jautāt, priekš atļaujas
-				local allowed = consent("Programma mēģina lejuplādēt " .. tostring(v[2]) .. "failus. Vai atļaut?")
-				if allowed == true then
-					return inf.request(url, postdata, headers)
-				else
-					error("Blocked by OCAV")
+		inet.request = function(url, postdata, headers)
+			-- pārbaudīt, vai url nav bloķēta/a
+			local blocked = false
+			local virus = ""
+			for i,v in pairs(blockedRootURLs) do
+				if string.sub(url,1,#v[1]) == v[1] then
+					virus = v[2]
+					blocked = true
+					break
 				end
 			end
+			-- ja url ir bloķēta, tad jautāt lietotājam, vai atļaut lejupielādi
+			if blocked == true then
+				if isDownloadAllowed() == true then
+					-- atļaut lejupielādi
+					return inf.request(url, postdata, headers)
+				else
+					-- jautāt lietotājam, vai atļaut lejupielādi
+					local allowed = consent("Programma mēģina lejupielādēt "..virus..". Vai atļaut?")
+					if allowed == true then
+						-- atļaut lejupielādi
+						lastVirusDownloadTime = os.time()
+						return inf.request(url, postdata, headers)
+					else
+						-- neatļaut lejupielādi
+						error("Blocked by OCAV")
+					end
+				end
+			else
+				-- adress nav bloķēta
+				return inf.request(url, postdata, headers)
+			end
 		end
+
 	end
 
 	return true
