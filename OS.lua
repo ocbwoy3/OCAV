@@ -102,7 +102,8 @@ end
 -- Initializing global package system
 package = {
 	paths = {
-		["/Libraries/"] = true
+		["/Libraries/"] = true;
+		["/.OCAV/Libraries"] = true;
 	},
 	loaded = {},
 	loading = {}
