@@ -6,7 +6,7 @@ if computer["\xFFOCAV_LOADED\xFF"] and computer["\xFFOCAV_LOADED\xFF"] == true t
 av.load = function(consent,fs,efi,inet)
 	local fsf = {} for a,b in pairs(fs) do fsf[a] = b end
   	local eff = {} for a,b in pairs(efi) do eff[a] = b end
-	if inet ~= nil then local inf = {} for a,b in pairs(inet) do inf[a] = b end end
+	inet = nil --if inet ~= nil then local inf = {} for a,b in pairs(inet) do inf[a] = b end end
 
 	computer["\xFFOCAV_LOADED\xFF"] = true
 
