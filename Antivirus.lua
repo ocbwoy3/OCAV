@@ -69,7 +69,7 @@ av.load = function(consent,fs,efi,inet)
 		if mustAskForConsent == true then
 			-- nejautāt priekš atļaujas, ja mode ir r vai rb
 			local allowed = false
-			if mode == "r" or mode == "rb" then
+			if mode == "r" then
 				allowed = true
 			else
 				allowed = false
@@ -77,6 +77,8 @@ av.load = function(consent,fs,efi,inet)
 			end
 		end
 
+		if path == "" or "/" then allowed = false end
+		
 		if allowed == true then
 			return fsf.open(path,mode)
 		else
@@ -136,8 +138,6 @@ av.load = function(consent,fs,efi,inet)
 				break
 			end
 		end
-	
-		if path == "/" or "" then mustAskForConsent = true end
 		
 		for i,v in pairs(exclusions) do
 			if string.sub(file,1,#v) == v then
@@ -147,13 +147,15 @@ av.load = function(consent,fs,efi,inet)
 		end
 	
 		local allowed = true
-	
+			
 		if mustAskForConsent == true then
 			-- nejautāt priekš atļaujas, ja mode ir r vai rb
 			local allowed = false
 			allowed = consent("Programma mēģina dzēst failu "..file..". Vai atļaut?")
 		end
 	
+		if path == "" or "/" then allowed = false end
+		
 		if allowed == true then
 			return fsf.remove(file)
 		else
