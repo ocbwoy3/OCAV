@@ -37,12 +37,11 @@ av.load = function(consent,fs,efi,inet)
   	-- Padarīt tā, ka fs.list "/" atgriež visu izņemot ".OCAV"
 	fs.list = function(path)
 		local list = fsf.list(path)
-		if path == "/" then
-			for i,v in ipairs(list) do
-				if v == ".OCAV" then
+
+		for i,v in ipairs(list) do
+			if v == ".OCAV" then
 				table.remove(list,i)
 				break
-				end
 			end
 		end
 		return list
