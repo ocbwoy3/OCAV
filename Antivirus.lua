@@ -10,6 +10,9 @@ av.load = function(consent,fs,efi,inet)
 
 	computer["\xFFOCAV_LOADED\xFF"] = true
 
+	-- The system file protection is broken
+	-- Procastinating too much lol, Send pull requests or issues or something
+	
 	-- Noņem OCAV no package.loaded
 	package.loaded["antivirus"] = nil
 	
