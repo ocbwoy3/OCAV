@@ -191,6 +191,7 @@ component.invoke(GPUAddress, "fill", 1, 1, screenWidth, screenHeight, " ")
 
 -- Loading libraries
 bit32 = bit32 or UIRequire("Bit32")
+consent("OCAV is still in development - Report bugs and issues on GitHub repository: ocboy3/OCAV")
 local paths = UIRequire("Paths")
 local event = UIRequire("Event")
 local filesystem = UIRequire("Filesystem")
@@ -214,7 +215,7 @@ local screen = UIRequire("Screen")
 local success,reason = pcall(function()
 	screen.setGPUAddress(GPUAddress)
 end)
-if not success then error("Setting GPU proxy failed, please update the Screen library") end
+if not success then error("Setting GPU proxy failed, are you using an old version of the Screen library?") end
 
 local GUI = UIRequire("GUI")
 local system = UIRequire("System")
