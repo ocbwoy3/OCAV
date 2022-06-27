@@ -9,6 +9,12 @@ local function download(file,where)
 	inet.download("https://raw.githubusercontent.com/ocboy3/OCAV/main" .. tostring(file),where)
 end
 
+local function downloadbeta(file,where)
+	inet.download("https://raw.githubusercontent.com/ocboy3/OCAV/dev" .. tostring(file),where)
+end
+
+
+
 ---------------------------------------------------------------------------------
 
 -- Add a new window to MineOS workspace
@@ -31,6 +37,14 @@ layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0x
 	download("/Antivirus.lua","/.OCAV/Libraries/Antivirus.lua")
 	GUI.alert("Sucessfully installed OCAV.\nA full system reboot is required in order to start the anti-virus.")
 end
+
+layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install developer beta")).onTouch = function()
+	downloadbeta("/dev_installer.lua","/OCAV_DEV.lua")
+	system.execute("/OCAV_DEV.lua")
+	fs.remove("/OCAV_DEV.lua")
+end
+
+
 -- Create callback function with resizing rules when window changes its' size
 window.onResize = function(newWidth, newHeight)
   window.backgroundPanel.width, window.backgroundPanel.height = newWidth, newHeight
