@@ -4,6 +4,9 @@ local av = {}
 if computer["\xFFOCAV_LOADED\xFF"] and computer["\xFFOCAV_LOADED\xFF"] == true then return {load = function() return false end} end
 
 av.load = function(consent,fs,efi,inet)
+	-- Experimental consent
+	_G.consent = consent
+	
 	local fsf = {} for a,b in pairs(fs) do fsf[a] = b end
   	local eff = {} for a,b in pairs(efi) do eff[a] = b end
 	inet = nil --if inet ~= nil then local inf = {} for a,b in pairs(inet) do inf[a] = b end end
@@ -32,207 +35,41 @@ av.load = function(consent,fs,efi,inet)
 		"/Versions.cfg";
 	}
 
-	-- Ielikt exclusions tabulā visas mapes mapē /Users
-	for i = 1, #fsf.list("/Users/") do
-		table.insert(exclusions, "/Users/" .. fsf.list("/Users/")[i])
-	end
+	local methodMap = {
+		{"CreateDirectory", "OCAV noteica, ka tiek izveidota mape '%s'. Vai atļaut?"};
+		{"open_w", "OCAV noteica, ka tiek rakstīts uz '%s'. Vai atļaut?"};
+		{"remove", "OCAV noteica, ka tiek dzēsts '%s'. Vai atļaut?"};
+		{"rename", "OCAV noteica, ka '%s' tiek pārdēvēts uz '%s'. Vai atļaut?"};
+		{"eeprom_set","OCAV noteica, ka tiek rakstīts EEPROM kods. Vai atļaut?"};
+		{"eeprom_makereadonly", "OCAV noteica, ka EEPROM tiek padarīts tikai lasāms. Vai atļaut?"};
+	}
 
-  	-- Padarīt tā, ka fs.list "/" atgriež visu izņemot ".OCAV"
-	fs.list = function(path)
-		local list = fsf.list(path)
-
-		for i,v in ipairs(list) do
-			if v == ".OCAV" then
-				table.remove(list,i)
-				break
-			end
-		end
-		return list
-	end
-
-	fs.open = function(path,mode)
-		local mustAskForConsent = false
-		-- Ja path sākas ar jebko no systemFiles, bet ne no exclusions, tad mustAskForConsent = true
-		for i,v in pairs(systemFiles) do
-			if string.sub(path,1,#v) == v then
-				mustAskForConsent = true
-				break
-			end
-		end
-
-		for i,v in pairs(exclusions) do
-			if string.sub(path,1,#v) == v then
-				mustAskForConsent = false
-				break
-			end
-		end
-
+	-- Funkcija, kas pārbauda, vai drīkst darīt šo un to
+	local function checkIfAllowed(what,method,other)
+		-- Pārbaudīt, vai fails ir systemFiles bet ne no exclusions
 		local allowed = true
-
-		if path == "" or "/" then mustAskForConsent = true end
-		
-		if mustAskForConsent == true then
-			-- nejautāt priekš atļaujas, ja mode ir r vai rb
-			local allowed = false
-			if mode == "r" then
-				allowed = true
-			else
-				allowed = false
-				allowed = consent("Programma mēģina rakstīt failā "..path..". Vai atļaut?")
+		for _, v in pairs(systemFiles) do
+			-- Pārbaudīt, vai v sākas ar what
+			if string.sub(v,1,string.len(what)) == what then
+				-- Pārbaudīt, vai v nav no exclusions
+				for _, v in pairs(exclusions) do
+					if string.sub(v,1,string.len(what)) == what then
+						allowed = false
+					end
+				end
 			end
 		end
-		
-		if allowed == true then
-			return fsf.open(path,mode)
-		else
-			return nil
+		if what == "" or what == "/" then allowed = false end
+		-- Jautāt lietotājam priekš atļaujas
+		if not allowed then
+			local question = string.format(methodMap[method][2], what, other)
+			if not consent(question) then
+				return false
+			end
 		end
+		return true
 	end
 
-	-- Tā pat ar fs.makeDirectory
-	fs.makeDirectory = function(path)
-		local mustAskForConsent = false
-		-- Ja path sākas ar jebko no systemFiles, bet ne no exclusions, tad mustAskForConsent = true
-		for i,v in pairs(systemFiles) do
-			if string.sub(path,1,#v) == v then
-				mustAskForConsent = true
-				break
-			end
-		end
-
-		if path == "/" or "" then mustAskForConsent = true end
-		
-		for i,v in pairs(exclusions) do
-			if string.sub(path,1,#v) == v then
-				mustAskForConsent = false
-				break
-			end
-		end
-
-		local allowed = true
-
-		if mustAskForConsent == true then
-			-- nejautāt priekš atļaujas, ja mode ir r vai rb
-			local allowed = false
-			-- pārbaudīt, vai mape jau eksistē izmantojot fsf.isDirectory(path)
-			if fsf.isDirectory(path) == true then
-				allowed = true
-			else
-				allowed = false
-				allowed = consent("Programma mēģina izveidot mapi "..path..". Vai atļaut?")
-			end
-		end
-
-		if allowed == true then
-			return fsf.makeDirectory(path)
-		else
-			return nil
-		end
-
-	end
-	
-	-- un fs.remove
-	fs.remove = function(file)
-		local mustAskForConsent = false
-		-- Ja path sākas ar jebko no systemFiles, bet ne no exclusions, tad mustAskForConsent = true
-		for i,v in pairs(systemFiles) do
-			if string.sub(file,1,#v) == v then
-				mustAskForConsent = true
-				break
-			end
-		end
-		
-		for i,v in pairs(exclusions) do
-			if string.sub(file,1,#v) == v then
-				mustAskForConsent = false
-				break
-			end
-		end
-	
-		local allowed = true
-			
-		if path == "" or "/" then mustAskForConsent = true end
-		
-		if mustAskForConsent == true then
-			-- nejautāt priekš atļaujas, ja mode ir r vai rb
-			local allowed = false
-			allowed = consent("Programma mēģina dzēst failu "..file..". Vai atļaut?")
-		end
-		
-		if allowed == true then
-			return fsf.remove(file)
-		else
-			return nil
-		end
-	end
-	
-	-- un fs.rename
-	fs.rename = function(oldName,newName)
-		local mustAskForConsent = false
-		-- Ja path sākas ar jebko no systemFiles, bet ne no exclusions, tad mustAskForConsent = true
-		for i,v in pairs(systemFiles) do
-			if string.sub(oldName,1,#v) == v then
-				mustAskForConsent = true
-				break
-			end
-		end
-	
-		if path == "/" or "" then mustAskForConsent = true end
-		
-		for i,v in pairs(exclusions) do
-			if string.sub(oldName,1,#v) == v then
-				mustAskForConsent = false
-				break
-			end
-		end
-	
-		local allowed = true
-	
-		if mustAskForConsent == true then
-			-- nejautāt priekš atļaujas, ja mode ir r vai rb
-			local allowed = false
-			allowed = consent("Programma mēģina pārdēvēt failu "..oldName.." uz "..newName..". Vai atļaut?")
-		end
-	
-		if allowed == true then
-			return fsf.rename(oldName,newName)
-		else
-			return nil
-		end
-	end
-
-	-- Aizsargāt EEPROM
-	efi.set = function(value)
-		-- Jautāt, priekš atļaujas
-		local allowed = consent("Programma mēģina ierakstīt EEPROM kodu. Vai atļaut?")
-		if allowed == true then
-			return eff.set(value)
-		else
-			return nil
-		end
-	end
-
-	-- tā pat ar efi.setLabel
-	efi.setLabel = function(value)
-		-- Jautāt, priekš atļaujas
-		local allowed = consent("Programma mēģina ierakstīt EEPROM nosaukumu. Vai atļaut?")
-		if allowed == true then
-			return eff.setLabel(value)
-		else
-			return nil
-		end
-	end
-
-	-- un efi.makeReadonly
-	efi.makeReadonly = function(checksum)
-		-- Jautāt, priekš atļaujas
-		local allowed = consent("Programma mēģina padarīt EEPROM tikai lasāmu. Vai atļaut?")
-		if allowed == true then
-			return eff.makeReadonly(checksum)
-		else
-			return nil
-		end
-	end
 
 	-- Aizsargāt datoru no OCHammer 2 un citu vīrusu lejupielādes
 
