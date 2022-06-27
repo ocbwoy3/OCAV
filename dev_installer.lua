@@ -1,8 +1,9 @@
 local sys = require("System")
 local fs = require("Filesystem")
 local inet = require("Internet")
+local GUI = require("GUI")
 local function dl(path,file)
-  inet.download("https://github.com/ocboy3/OCAV/dev" .. tostring(path),file)
+  inet.download("https://raw.githubusercontent.com/ocboy3/OCAV/dev" .. tostring(path),file)
 end
 
 fs.makeDirectory("/.OCAV/")
