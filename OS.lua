@@ -213,7 +213,7 @@ local screen = UIRequire("Screen")
 -- Setting currently chosen GPU component as screen buffer main one
 local success,reason = pcall(function()
 	screen.setGPUAddress(GPUAddress)
-end
+end)
 if not success then error("Setting GPU proxy failed, please update the Screen library") end
 
 local GUI = UIRequire("GUI")
