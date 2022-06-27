@@ -65,8 +65,6 @@ end
 
 -- Obtaining boot filesystem component proxy
 local bootFilesystemProxy = component.proxy(component.proxy(component.list("eeprom")()).getData())
-local bootEEPROMProxy = component.proxy(component.list("eeprom")())
-local bootInternetProxy = component.proxy(component.list("internet")())
 
 -- Executes file from boot HDD during OS initialization (will be overriden in filesystem library later)
 function dofile(path)
@@ -102,8 +100,7 @@ end
 -- Initializing global package system
 package = {
 	paths = {
-		["/Libraries/"] = true;
-		["/.OCAV/Libraries/"] = true;
+		["/Libraries/"] = true
 	},
 	loaded = {},
 	loading = {}
@@ -196,9 +193,6 @@ component.invoke(GPUAddress, "fill", 1, 1, screenWidth, screenHeight, " ")
 bit32 = bit32 or UIRequire("Bit32")
 local paths = UIRequire("Paths")
 local event = UIRequire("Event")
-local antivirus = require("Antivirus")
-antivirus.load(consent,bootFilesystemProxy,bootEEPROMProxy,bootInternetProxy)
-antivirus = nil
 local filesystem = UIRequire("Filesystem")
 
 -- Setting main filesystem proxy to what are we booting from
@@ -217,7 +211,10 @@ local image = UIRequire("Image")
 local screen = UIRequire("Screen")
 
 -- Setting currently chosen GPU component as screen buffer main one
-screen.setGPUAddress(GPUAddress)
+local success,reason = pcall(function()
+	screen.setGPUAddress(GPUAddress)
+end
+if not success then error("Setting GPU proxy failed, please update the Screen library") end
 
 local GUI = UIRequire("GUI")
 local system = UIRequire("System")
