@@ -217,6 +217,7 @@ end)
 if not success then error("Setting GPU proxy failed, please update the Screen library") end
 
 local GUI = UIRequire("GUI")
+GUI.consent = consent
 local system = UIRequire("System")
 UIRequire("Network")
 
