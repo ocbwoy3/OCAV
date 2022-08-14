@@ -61,7 +61,7 @@ local function consent(question)
   return choice
 end
 
-consent("This is the OCAV developer beta! Try new features at your own risk")
+--consent("This is the OCAV developer beta! Try new features at your own risk")
 
 ---------------------------------------- System initialization ----------------------------------------
 
