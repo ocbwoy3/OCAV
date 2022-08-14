@@ -191,7 +191,7 @@ component.invoke(GPUAddress, "fill", 1, 1, screenWidth, screenHeight, " ")
 
 -- Loading libraries
 bit32 = bit32 or UIRequire("Bit32")
-consent("OCAV is still in development - Report bugs and issues on GitHub repository: ocboy3/OCAV")
+-- consent("OCAV is still in development - Report bugs and issues on GitHub repository: ocboy3/OCAV")
 local paths = UIRequire("Paths")
 local event = UIRequire("Event")
 local filesystem = UIRequire("Filesystem")
