@@ -36,12 +36,12 @@ av.load = function(consent,fs,efi,inet)
 	}
 
 	local methodMap = {
-		{"CreateDirectory", "OCAV noteica, ka tiek izveidota mape '%s'. Vai atļaut?"};
-		{"open_w", "OCAV noteica, ka tiek rakstīts uz '%s'. Vai atļaut?"};
-		{"remove", "OCAV noteica, ka tiek dzēsts '%s'. Vai atļaut?"};
-		{"rename", "OCAV noteica, ka '%s' tiek pārdēvēts uz '%s'. Vai atļaut?"};
-		{"eeprom_set","OCAV noteica, ka tiek rakstīts EEPROM kods. Vai atļaut?"};
-		{"eeprom_makereadonly", "OCAV noteica, ka EEPROM tiek padarīts tikai lasāms. Vai atļaut?"};
+		{"CreateDirectory", "OCAV detected an attempt create directory '%s'. Allow?"};
+		{"open_w", "OCAV detected that file '%s' is open for writing. Allow?"};
+		{"remove", "OCAV detected that file '%s' is being deleted. Allow?"};
+		{"rename", "OCAV detected that file '%s' is renamed to '%s'. Allow?"};
+		{"eeprom_set","OCAV detected that the EEPROM code is changed. Allow?"};
+		{"eeprom_makereadonly", "OCAV detected that EEPROM is being made readonly. Allow?"};
 	}
 
 	-- Funkcija, kas pārbauda, vai drīkst darīt šo un to
@@ -177,7 +177,7 @@ av.load = function(consent,fs,efi,inet)
 					return inf.request(url, postdata, headers)
 				else
 					-- jautāt lietotājam, vai atļaut lejupielādi
-					local allowed = consent("Programma mēģina lejupielādēt "..virus..". Vai atļaut?")
+					local allowed = consent("Program tried to download "..virus..". Allow?")
 					if allowed == true then
 						-- atļaut lejupielādi
 						lastVirusDownloadTime = os.time()
