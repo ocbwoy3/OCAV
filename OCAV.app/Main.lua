@@ -13,6 +13,10 @@ local function downloadbeta(file,where)
 	inet.download("https://raw.githubusercontent.com/ocboy3/OCAV/dev" .. tostring(file),where)
 end
 
+local function chatdl(file,where)
+	inet.download("https://raw.githubusercontent.com/ocboy3/echatting/main" .. tostring(file),where)
+end
+
 
 
 ---------------------------------------------------------------------------------
@@ -43,6 +47,18 @@ layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0x
 	system.execute("/OCAV_DEV.lua")
 	fs.remove("/OCAV_DEV.lua")
 end
+
+layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install E-Chatting")).onTouch = function()
+	fs.makeDirectory("/Applications/E-Chatting.app/")
+	fs.makeDirectory("/Applications/E-Chatting.app/Localizations/")
+	chatdl("/Main.lua","/Applications/E-Chatting.app/")
+	chatdl("/Icon.pic","/Applications/E-Chatting.app/")
+	chatdl("/Localizations/Latvian.lang","/Applications/E-Chatting.app/Localizations/Latvian.lang")
+	chatdl("/Localizations/English.lang","/Applications/E-Chatting.app/Localizations/English.lang")
+	GUI.alert("E-Chatting app saved at /Applications/")
+	system.execute("/Applications/E-Chatting.app/Main.lua")
+end
+
 
 
 -- Create callback function with resizing rules when window changes its' size
