@@ -11,6 +11,27 @@ av.load = function(consent,fs,efi,inet)
   	local eff = {} for a,b in pairs(efi) do eff[a] = b end
 	inet = nil --if inet ~= nil then local inf = {} for a,b in pairs(inet) do inf[a] = b end end
 
+	local ocav_getver = function() return "1" end
+
+	local oldpull = computer.pullEvent
+	local oldpush = computer.pushEvent
+
+	local x = function()
+
+	local newpull = function(...)
+		local a, b = pcall(function()
+			x()
+			if _G.OCAV_GetVersion ~= ocav_getver then computer.pushEvent("ocav","functionOverwrite","getVersion") _G.OCAV_GetVersion = ocav_getver end
+			return oldpull(...)
+		end)
+		if a ~= nil then return b else return {"ocav", "error", b} end
+	end
+
+	x = function()
+		if computer.pullEvent ~= newpull then computer.pushEvent("ocav","functionOverwrite","pullEvent") computer.pullEvent = newpull end
+		if computer.pushEvent ~= oldpush then computer.pushEvent("ocav","functionOverwrite","pushEvent") computer.pullEvent = oldpush end
+	end	
+
 	computer["\xFFOCAV_LOADED\xFF"] = true
 
 	-- The system file protection is broken
