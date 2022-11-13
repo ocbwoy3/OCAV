@@ -48,11 +48,12 @@ layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0x
 	fs.remove("/OCAV_DEV.lua")
 end
 
-layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install E-Chatting")).onTouch = function()
+layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install E-Chatting Preview")).onTouch = function()
 	fs.makeDirectory("/Applications/E-Chatting.app/")
 	fs.makeDirectory("/Applications/E-Chatting.app/Localizations/")
 	chatdl("/Main.lua","/Applications/E-Chatting.app/")
 	chatdl("/Icon.pic","/Applications/E-Chatting.app/")
+	chatdl("/echatting.util.lua","/Applications/E-Chatting.app/")
 	chatdl("/Localizations/Latvian.lang","/Applications/E-Chatting.app/Localizations/Latvian.lang")
 	chatdl("/Localizations/English.lang","/Applications/E-Chatting.app/Localizations/English.lang")
 	GUI.alert("E-Chatting app saved at /Applications/")
