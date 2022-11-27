@@ -48,19 +48,23 @@ layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0x
 	fs.remove("/OCAV_DEV.lua")
 end
 
+layout:addChild(GUI.text(1, 1, 0x4B4B4B, " "))
+layout:addChild(GUI.text(1, 1, 0x4B4B4B, "REQUIREMENTS BEFORE INSTALLING E-CHATTING:"))
+layout:addChild(GUI.text(1, 1, 0x4B4B4B, "QR Library (AppStore > Libraries > QR code)"))
+layout:addChild(GUI.text(1, 1, 0x4B4B4B, "Latvian language (AppStore > Scripts > MineOS latvian language)"))
+layout:addChild(GUI.text(1, 1, 0x4B4B4B, "Also set Latvian as default language in Settings > Language."))
+
 layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install E-Chatting Preview")).onTouch = function()
 	fs.makeDirectory("/Applications/E-Chatting.app/")
 	fs.makeDirectory("/Applications/E-Chatting.app/Localizations/")
 	chatdl("/Main.lua","/Applications/E-Chatting.app/Main.lua")
 	chatdl("/Icon.pic","/Applications/E-Chatting.app/Icon.pic")
-	chatdl("/echatting.util.lua","/Applications/E-Chatting.app/echatting.util.lua")
+	chatdl("/QR.lua","/Libraries/QR.lua")
 	chatdl("/Localizations/Latvian.lang","/Applications/E-Chatting.app/Localizations/Latvian.lang")
 	chatdl("/Localizations/English.lang","/Applications/E-Chatting.app/Localizations/English.lang")
 	GUI.alert("E-Chatting app saved at /Applications/")
 	system.execute("/Applications/E-Chatting.app/Main.lua")
 end
-
-
 
 -- Create callback function with resizing rules when window changes its' size
 window.onResize = function(newWidth, newHeight)
