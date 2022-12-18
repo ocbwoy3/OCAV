@@ -22,7 +22,7 @@ end
 ---------------------------------------------------------------------------------
 
 -- Add a new window to MineOS workspace
-local workspace, window, menu = system.addWindow(GUI.filledWindow(1, 1, 60, 20, 0xE1E1E1))
+local workspace, window, menu = system.addWindow(GUI.filledWindow(1, 1, 60*2, 20*2, 0xE1E1E1))
 
 -- Get localization table dependent of current system language
 --local localization = system.getCurrentScriptLocalization()
@@ -51,8 +51,7 @@ end
 layout:addChild(GUI.text(1, 1, 0x4B4B4B, " "))
 layout:addChild(GUI.text(1, 1, 0x4B4B4B, "REQUIREMENTS BEFORE INSTALLING E-CHATTING:"))
 layout:addChild(GUI.text(1, 1, 0x4B4B4B, "QR Library (AppStore > Libraries > QR code)"))
-layout:addChild(GUI.text(1, 1, 0x4B4B4B, "Latvian language (AppStore > Scripts > MineOS latvian language)"))
-layout:addChild(GUI.text(1, 1, 0x4B4B4B, "Also set Latvian as default language in Settings > Language."))
+layout:addChild(GUI.text(1, 1, 0x4B4B4B, "Optional: Latvian language (AppStore > Scripts > MineOS latvian language)"))
 
 layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install E-Chatting Preview")).onTouch = function()
 	fs.makeDirectory("/Applications/E-Chatting.app/")
