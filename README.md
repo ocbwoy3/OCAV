@@ -3,7 +3,7 @@ An antivirus for OpenComputers, that includes system file protection and firewal
 **Firewall is currently disabled because I have no idea how to fix invalid argument error.**<br>
 **If anybody can fix it, please make a issue or something.**
 
-#How to install OCAV
+# How to install OCAV
 1) Install MineOS 
 2) AppStore > Applicatons > OCAV > Install
 3) Desktop > Click on OCAV
