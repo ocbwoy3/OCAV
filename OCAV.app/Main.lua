@@ -13,6 +13,10 @@ local function downloadbeta(file,where)
 	inet.download("https://raw.githubusercontent.com/ocboy3/OCAV/dev" .. tostring(file),where)
 end
 
+local function downloadcanary(file,where)
+	inet.download("https://raw.githubusercontent.com/ocboy3/OCAV/OCAV2" .. tostring(file),where)
+end
+
 local function chatdl(file,where)
 	inet.download("https://raw.githubusercontent.com/ocboy3/echatting/main" .. tostring(file),where)
 end
@@ -48,12 +52,19 @@ layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0x
 	fs.remove("/OCAV_DEV.lua")
 end
 
+layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install OCAV 2 (wip)")).onTouch = function()
+	downloadcanary("/canary_installer.lua","/OCAV_CANARYINSTALLER.lua")
+	system.execute("/OCAV_CANARYINSTALLER.lua")
+	fs.remove("/OCAV_CANARYINSTALLER.lua")
+end
+
 layout:addChild(GUI.text(1, 1, 0x4B4B4B, " "))
 layout:addChild(GUI.text(1, 1, 0x4B4B4B, "REQUIREMENTS BEFORE INSTALLING E-CHATTING:"))
 layout:addChild(GUI.text(1, 1, 0x4B4B4B, "QR Library (AppStore > Libraries > QR code)"))
 layout:addChild(GUI.text(1, 1, 0x4B4B4B, "Optional: Latvian language (AppStore > Scripts > MineOS latvian language)"))
 
 layout:addChild(GUI.roundedButton(2, 18, 30, 3, 0xFFFFFF, 0x555555, 0x880000, 0xFFFFFF, "Install E-Chatting Preview")).onTouch = function()
+	GUI.alert("You're downloading an OCAV canary version! What the fuck? Everything will be up-to-date!, i guess")
 	fs.makeDirectory("/Applications/E-Chatting.app/")
 	fs.makeDirectory("/Applications/E-Chatting.app/Localizations/")
 	chatdl("/Main.lua","/Applications/E-Chatting.app/Main.lua")
