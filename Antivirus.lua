@@ -129,7 +129,7 @@ av.load = function(consent,fs,efi,inet)
 			return
 		end;
 		response = function()
-			return 404
+			return 403
 		end;
 		finishConnect = function()
 			error("Blocked by OCAV")
